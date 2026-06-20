@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Analytics Dashboard</title>
 
-<!-- ✅ FIXED Chart.js -->
+<!-- ✅ FIXED SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -34,9 +34,9 @@ h1 { text-align: center; }
     text-align: center;
 }
 
-.green { color: green; }
-.orange { color: orange; }
-.red { color: red; }
+.green { color: #2ecc71; }
+.orange { color: #f39c12; }
+.red { color: #e74c3c; }
 
 .full { grid-column: span 6; }
 .half { grid-column: span 3; }
@@ -51,6 +51,9 @@ table {
 }
 th, td {
     padding: 8px;
+}
+th {
+    background:#ecf0f1;
 }
 </style>
 
@@ -69,42 +72,43 @@ th, td {
 <p><b>Overall Delivery:</b> ~60%</p>
 <p><b>Main Challenges:</b> Dependencies & Capacity</p>
 <p><b>Key Risk:</b> High carry forward (~40%)</p>
-<p><b>Next Focus:</b> Improve PI planning accuracy & manage blockers earlier</p>
+<p><b>Next Focus:</b> Improve PI planning & reduce blockers early</p>
 </div>
 
-<!-- ✅ BACKLOG TABLE -->
+<!-- ✅ BACKLOG -->
 <div class="card full">
 <h3>Backlog</h3>
+
 <table border="1" width="100%">
-<tr style="background:#ecf0f1;">
+<tr>
 <th>PI</th><th>Item</th><th>Owner</th><th>Status</th><th>Achieved</th><th>Reason</th>
 </tr>
 
 <tr>
 <td>PI2</td><td>Dashboard Enhancement</td><td>Salma</td>
-<td style="color:orange;">In Progress</td>
-<td style="color:red;">No</td>
+<td style="color:#f39c12;">In Progress</td>
+<td style="color:#e74c3c;">No</td>
 <td>Dependency</td>
 </tr>
 
 <tr>
 <td>PI2</td><td>Data Fix</td><td>Ahmed</td>
-<td class="green">Completed</td>
-<td class="green">Yes</td>
+<td style="color:#2ecc71;">Completed</td>
+<td style="color:#2ecc71;">Yes</td>
 <td>-</td>
 </tr>
 
 <tr>
 <td>PI1</td><td>Automation</td><td>Ali</td>
 <td style="color:gray;">Carry Forward</td>
-<td style="color:red;">No</td>
+<td style="color:#e74c3c;">No</td>
 <td>Capacity</td>
 </tr>
 
 </table>
 </div>
 
-<!-- ✅ KPIs -->
+<!-- ✅ KPI CARDS -->
 <div class="card"><div>PI1 Delivery</div><div class="kpi orange">60%</div></div>
 <div class="card"><div>PI2 Delivery</div><div class="kpi orange">62%</div></div>
 <div class="card"><div>Total Items</div><div class="kpi">110</div></div>
@@ -112,95 +116,100 @@ th, td {
 <div class="card"><div>Carry Forward</div><div class="kpi red">42</div></div>
 <div class="card"><div>Blocked</div><div class="kpi red">15</div></div>
 
-<!-- ✅ STATUS (STACKED BAR - REPLACEMENT) -->
+<!-- ✅ STATUS STACKED BAR -->
 <div class="card full">
-<h3>PI Status Breakdown (Better Visual)</h3>
+<h3>PI Status Breakdown</h3>
 <canvas id="statusChart"></canvas>
 </div>
 
-<!-- ✅ OTHER CHARTS -->
+<!-- ✅ ITEMS PER PI -->
 <div class="card half">
-    <h3>Items per PI</h3>
-    <canvas id="itemsPI"></canvas>
+<h3>Items per PI</h3>
+<canvas id="itemsPI"></canvas>
 </div>
 
+<!-- ✅ PLANNED VS ACHIEVED -->
 <div class="card half">
-    <h3>Planned vs Achieved</h3>
-    <canvas id="plannedAchieved"></canvas>
+<h3>Planned vs Achieved</h3>
+<canvas id="plannedAchieved"></canvas>
 </div>
 
+<!-- ✅ OWNERSHIP -->
 <div class="card half">
-    <h3>Ownership</h3>
-    <canvas id="ownerChart"></canvas>
+<h3>Ownership Distribution</h3>
+<canvas id="ownerChart"></canvas>
 </div>
 
+<!-- ✅ REASONS -->
 <div class="card half">
-    <h3>Reasons for Delay</h3>
-    <canvas id="reasonChart"></canvas>
+<h3>Reasons for Non-Achievement</h3>
+<canvas id="reasonChart"></canvas>
 </div>
 
+<!-- ✅ IMPROVEMENTS -->
 <div class="card full">
-    <h3>Improvement Actions</h3>
-    <canvas id="improvementChart"></canvas>
+<h3>Improvement Actions</h3>
+<canvas id="improvementChart"></canvas>
 </div>
 
 </div>
 
 <script>
 
-// ✅ STATUS STACKED BAR (BEST REPLACEMENT)
+// ✅ STACKED STATUS (MAIN FIX)
 new Chart(document.getElementById('statusChart'), {
-    type:'bar',
-    data:{
-        labels:['PI1','PI2'],
-        datasets:[
+    type: 'bar',
+    data: {
+        labels: ['PI1', 'PI2'],
+        datasets: [
             {
-                label:'Done',
-                data:[60,62],
-                backgroundColor:'green'
+                label: 'Done',
+                data: [60, 62],
+                backgroundColor: '#2ecc71'
             },
             {
-                label:'In Progress',
-                data:[20,18],
-                backgroundColor:'orange'
+                label: 'In Progress',
+                data: [20, 18],
+                backgroundColor: '#f39c12'
             },
             {
-                label:'Blocked',
-                data:[10,12],
-                backgroundColor:'red'
+                label: 'Blocked',
+                data: [10, 12],
+                backgroundColor: '#e74c3c'
             },
             {
-                label:'Carry Forward',
-                data:[10,8],
-                backgroundColor:'gray'
+                label: 'Carry Forward',
+                data: [10, 8],
+                backgroundColor: '#7f8c8d'
             }
         ]
     },
-    options:{
-        responsive:true,
-        scales:{
-            x:{ stacked:true },
-            y:{ stacked:true }
+    options: {
+        plugins: {
+            legend: { position: 'top' }
+        },
+        scales: {
+            x: { stacked: true },
+            y: { stacked: true }
         }
     }
 });
 
-// Items per PI
+// ✅ ITEMS PER PI
 new Chart(document.getElementById('itemsPI'), {
     type: 'bar',
     data: {
         labels: ['PI1','PI2'],
         datasets: [{
-            label: 'Items',
             data: [100,110],
             backgroundColor: '#3498db'
         }]
     }
 });
 
-// Planned vs Achieved
+// ✅ PLANNED VS ACHIEVED
 new Chart(document.getElementById('plannedAchieved'), {
-    type:'bar',
+    type: 'bar',
     data:{
         labels:['PI1','PI2'],
         datasets:[
@@ -210,7 +219,7 @@ new Chart(document.getElementById('plannedAchieved'), {
     }
 });
 
-// Ownership
+// ✅ OWNERSHIP
 new Chart(document.getElementById('ownerChart'), {
     type:'bar',
     data:{
@@ -222,26 +231,26 @@ new Chart(document.getElementById('ownerChart'), {
     }
 });
 
-// Reasons
+// ✅ REASONS
 new Chart(document.getElementById('reasonChart'), {
     type:'bar',
     data:{
         labels:['Dependency','Capacity','Scope'],
         datasets:[{
             data:[25,10,7],
-            backgroundColor:'red'
+            backgroundColor:'#e74c3c'
         }]
     }
 });
 
-// Improvements
+// ✅ IMPROVEMENTS
 new Chart(document.getElementById('improvementChart'), {
     type:'bar',
     data:{
         labels:['Escalate','Replan','Refine'],
         datasets:[{
             data:[20,15,10],
-            backgroundColor:'green'
+            backgroundColor:'#2ecc71'
         }]
     }
 });
