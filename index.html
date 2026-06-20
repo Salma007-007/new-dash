@@ -3,215 +3,199 @@
 <head>
 <meta charset="UTF-8">
 <title>Analytics Dashboard</title>
-
-<!-- Chart.js -->
-https://cdn.jsdelivr.net/npm/chart.jsscript>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body {
-    font-family: Arial;
-    background: #f5f6fa;
-    margin: 20px;
-}
-h1 { text-align: center; }
+body { font-family: Arial; background:#f5f6fa; margin:20px; }
+h1 { text-align:center; }
 
 .container {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 15px;
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:15px;
 }
 
 .card {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
-.kpi {
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-}
+.full { grid-column:span 6; }
+.half { grid-column:span 3; }
 
-.green { color: green; }
-.orange { color: orange; }
-.red { color: red; }
+.kpi { font-size:20px; font-weight:bold; text-align:center; }
 
-.full { grid-column: span 6; }
-.half { grid-column: span 3; }
-
-canvas {
-    width: 100% !important;
-    height: 260px !important;
+select {
+    padding:5px;
+    margin-right:10px;
 }
 </style>
-
 </head>
 
 <body>
 
-<h1>📊 Analytics Team Dashboard</h1>
-<p style="text-align:center;"><b>PI 1 vs PI 2 | Delivery ~60%</b></p>
+<h1>📊 Analytics Dashboard</h1>
+
+<div class="card full">
+<b>Filter:</b>
+<select id="piFilter">
+    <option value="All">All PI</option>
+    <option value="PI1">PI1</option>
+    <option value="PI2">PI2</option>
+</select>
+
+<select id="ownerFilter">
+    <option value="All">All Owners</option>
+    <option value="Gautam">Gautam</option>
+    <option value="Adrian">Adrian</option>
+    <option value="Bogdan">Bogdan</option>
+    <option value="Salma">Salma</option>
+</select>
+<button onclick="updateDashboard()">Apply</button>
+</div>
 
 <div class="container">
 
-<!-- ✅ EXECUTIVE SUMMARY FIRST -->
+<!-- SUMMARY -->
 <div class="card full">
 <h3>Executive Summary</h3>
-<p><b>Overall Delivery:</b> ~60%</p>
-<p><b>Main Challenges:</b> Dependencies & Capacity</p>
-<p><b>Key Risk:</b> High carry forward (~40%)</p>
-<p><b>Next Focus:</b> Improve PI planning accuracy & manage blockers earlier</p>
+<p><b>Delivery:</b> ~60%</p>
+<p><b>Main Issues:</b> Dependencies & Capacity</p>
+<p><b>Focus:</b> Improve planning & reduce carry forward</p>
 </div>
 
-<!-- ✅ BACKLOG TABLE SECOND -->
+<!-- BACKLOG -->
 <div class="card full">
 <h3>Backlog</h3>
-<table border="1" width="100%" style="border-collapse: collapse; text-align:center;">
-<tr style="background:#ecf0f1;">
-<th>PI</th><th>Item</th><th>Owner</th><th>Status</th><th>Achieved</th><th>Reason</th>
-</tr>
-
-<tr>
-<td>PI2</td><td>Dashboard Enhancement</td><td>Salma</td>
-<td style="color:orange;">In Progress</td>
-<td class="red">No</td>
-<td>Dependency</td>
-</tr>
-
-<tr>
-<td>PI2</td><td>Data Fix</td><td>Ahmed</td>
-<td class="green">Completed</td>
-<td class="green">Yes</td>
-<td>-</td>
-</tr>
-
-<tr>
-<td>PI1</td><td>Automation</td><td>Ali</td>
-<td style="color:gray;">Carry Forward</td>
-<td class="red">No</td>
-<td>Capacity</td>
-</tr>
-
+<table border="1" width="100%">
+<tr><th>PI</th><th>Item</th><th>Owner</th><th>Status</th></tr>
+<tr><td>PI1</td><td>Automation</td><td>Gautam</td><td>Carry Forward</td></tr>
+<tr><td>PI1</td><td>Fix Data</td><td>Adrian</td><td>Done</td></tr>
+<tr><td>PI2</td><td>Dashboard</td><td>Salma</td><td>In Progress</td></tr>
+<tr><td>PI2</td><td>Report Build</td><td>Bogdan</td><td>Blocked</td></tr>
 </table>
 </div>
 
-<!-- ✅ KPI CARDS -->
-<div class="card"><div>PI1 Delivery</div><div class="kpi orange">60%</div></div>
-<div class="card"><div>PI2 Delivery</div><div class="kpi orange">62%</div></div>
-<div class="card"><div>Total Items</div><div class="kpi">110</div></div>
-<div class="card"><div>Achieved</div><div class="kpi green">68</div></div>
-<div class="card"><div>Carry Forward</div><div class="kpi red">42</div></div>
-<div class="card"><div>Blocked</div><div class="kpi red">15</div></div>
+<!-- KPI -->
+<div class="card"><div>PI1 Delivery</div><div class="kpi">60%</div></div>
+<div class="card"><div>PI2 Delivery</div><div class="kpi">62%</div></div>
+<div class="card"><div>Carry Forward</div><div class="kpi">40%</div></div>
 
-<!-- ✅ CHARTS -->
-<div class="card half">
-    <h3>Items per PI</h3>
-    <canvas id="itemsPI"></canvas>
+<!-- STATUS CHART -->
+<div class="card full">
+<h3>Status Breakdown (Filtered)</h3>
+<canvas id="statusChart"></canvas>
 </div>
 
+<!-- OWNER WORKLOAD -->
 <div class="card half">
-    <h3>Planned vs Achieved</h3>
-    <canvas id="plannedAchieved"></canvas>
+<h3>Items by Owner</h3>
+<canvas id="ownerChart"></canvas>
 </div>
 
+<!-- REASONS -->
 <div class="card half">
-    <h3>Ownership</h3>
-    <canvas id="ownerChart"></canvas>
-</div>
-
-<div class="card half">
-    <h3>Status</h3>
-    <canvas id="statusChart"></canvas>
-</div>
-
-<div class="card half">
-    <h3>Reasons for Delay</h3>
-    <canvas id="reasonChart"></canvas>
-</div>
-
-<div class="card half">
-    <h3>Improvements</h3>
-    <canvas id="improvementChart"></canvas>
+<h3>Delay Reasons</h3>
+<canvas id="reasonChart"></canvas>
 </div>
 
 </div>
 
 <script>
 
-// Items per PI
-new Chart(document.getElementById('itemsPI'), {
-    type: 'bar',
-    data: {
-        labels: ['PI1','PI2'],
-        datasets: [{
-            label: 'Items',
-            data: [100,110],
-            backgroundColor: '#3498db'
-        }]
-    }
-});
+// ✅ DATASET (you will replace later from Excel)
+const data = [
+    {pi:'PI1', owner:'Gautam', status:'Carry Forward'},
+    {pi:'PI1', owner:'Adrian', status:'Done'},
+    {pi:'PI2', owner:'Salma', status:'In Progress'},
+    {pi:'PI2', owner:'Bogdan', status:'Blocked'}
+];
 
-// Planned vs Achieved
-new Chart(document.getElementById('plannedAchieved'), {
-    type:'bar',
-    data:{
-        labels:['PI1','PI2'],
-        datasets:[
-            {label:'Planned', data:[100,110], backgroundColor:'#bdc3c7'},
-            {label:'Achieved', data:[60,68], backgroundColor:'#2ecc71'}
-        ]
-    }
-});
+// ✅ FILTER FUNCTION
+function getFilteredData() {
+    const pi = document.getElementById('piFilter').value;
+    const owner = document.getElementById('ownerFilter').value;
 
-// Ownership
-new Chart(document.getElementById('ownerChart'), {
-    type:'bar',
-    data:{
-        labels:['Salma','Ahmed','Ali','Sara'],
-        datasets:[{
-            data:[30,25,28,27],
-            backgroundColor:'#9b59b6'
-        }]
-    }
-});
+    return data.filter(d =>
+        (pi === 'All' || d.pi === pi) &&
+        (owner === 'All' || d.owner === owner)
+    );
+}
 
-// Status
-new Chart(document.getElementById('statusChart'), {
-    type:'doughnut',
-    data:{
-        labels:['Done','In Progress','Blocked','Carry Forward'],
-        datasets:[{
-            data:[68,20,15,42],
-            backgroundColor:['green','orange','red','gray']
-        }]
-    }
-});
+// ✅ BUILD CHARTS
+let statusChart, ownerChart, reasonChart;
 
-// Reasons
-new Chart(document.getElementById('reasonChart'), {
-    type:'bar',
-    data:{
-        labels:['Dependency','Capacity','Scope'],
-        datasets:[{
-            data:[25,10,7],
-            backgroundColor:'red'
-        }]
-    }
-});
+function updateDashboard() {
 
-// Improvements
-new Chart(document.getElementById('improvementChart'), {
-    type:'bar',
-    data:{
-        labels:['Escalate','Replan','Refine'],
-        datasets:[{
-            data:[20,15,10],
-            backgroundColor:'green'
-        }]
-    }
-});
+    const filtered = getFilteredData();
+
+    // STATUS COUNT
+    const statusCounts = {
+        Done:0,
+        'In Progress':0,
+        Blocked:0,
+        'Carry Forward':0
+    };
+
+    filtered.forEach(d => statusCounts[d.status]++);
+
+    // OWNER COUNT
+    const ownerCounts = {};
+    filtered.forEach(d=>{
+        ownerCounts[d.owner]=(ownerCounts[d.owner]||0)+1;
+    });
+
+    // CLEAR OLD CHARTS
+    if(statusChart) statusChart.destroy();
+    if(ownerChart) ownerChart.destroy();
+    if(reasonChart) reasonChart.destroy();
+
+    // ✅ STATUS STACKED
+    statusChart = new Chart(document.getElementById('statusChart'), {
+        type:'bar',
+        data:{
+            labels:['Status'],
+            datasets:[
+                {label:'Done', data:[statusCounts['Done']], backgroundColor:'#2ecc71'},
+                {label:'In Progress', data:[statusCounts['In Progress']], backgroundColor:'#f39c12'},
+                {label:'Blocked', data:[statusCounts['Blocked']], backgroundColor:'#e74c3c'},
+                {label:'Carry Forward', data:[statusCounts['Carry Forward']], backgroundColor:'#7f8c8d'}
+            ]
+        },
+        options:{
+            scales:{ x:{stacked:true}, y:{stacked:true} }
+        }
+    });
+
+    // ✅ OWNER CHART
+    ownerChart = new Chart(document.getElementById('ownerChart'), {
+        type:'bar',
+        data:{
+            labels:Object.keys(ownerCounts),
+            datasets:[{
+                data:Object.values(ownerCounts),
+                backgroundColor:'#3498db'
+            }]
+        }
+    });
+
+    // ✅ REASON MOCK (static for demo)
+    reasonChart = new Chart(document.getElementById('reasonChart'), {
+        type:'bar',
+        data:{
+            labels:['Dependency','Capacity'],
+            datasets:[{
+                data:[3,2],
+                backgroundColor:'#e74c3c'
+            }]
+        }
+    });
+}
+
+// INIT
+updateDashboard();
 
 </script>
 
