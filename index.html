@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Analytics Dashboard</title>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f5f6fa;
+    margin: 20px;
+}
+h1 { text-align: center; }
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.kpi {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.green { color: green; }
+.orange { color: orange; }
+.red { color: red; }
+
+.full { grid-column: span 6; }
+.half { grid-column: span 3; }
+
+canvas {
+    width: 100% !important;
+    height: 260px !important;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>📊 Analytics Team Dashboard</h1>
+<p style="text-align:center;"><b>PI 1 vs PI 2 | Delivery ~60%</b></p>
+
+<div class="container">
+
+<!-- ✅ EXECUTIVE SUMMARY FIRST -->
+<div class="card full">
+<h3>Executive Summary</h3>
+<p><b>Overall Delivery:</b> ~60%</p>
+<p><b>Main Challenges:</b> Dependencies & Capacity</p>
+<p><b>Key Risk:</b> High carry forward (~40%)</p>
+<p><b>Next Focus:</b> Improve PI planning accuracy & manage blockers earlier</p>
+</div>
+
+<!-- ✅ BACKLOG TABLE SECOND -->
+<div class="card full">
+<h3>Backlog</h3>
+<table border="1" width="100%" style="border-collapse: collapse; text-align:center;">
+<tr style="background:#ecf0f1;">
+<th>PI</th><th>Item</th><th>Owner</th><th>Status</th><th>Achieved</th><th>Reason</th>
+</tr>
+
+<tr>
+<td>PI2</td><td>Dashboard Enhancement</td><td>Salma</td>
+<td style="color:orange;">In Progress</td>
+<td class="red">No</td>
+<td>Dependency</td>
+</tr>
+
+<tr>
+<td>PI2</td><td>Data Fix</td><td>Ahmed</td>
+<td class="green">Completed</td>
+<td class="green">Yes</td>
+<td>-</td>
+</tr>
+
+<tr>
+<td>PI1</td><td>Automation</td><td>Ali</td>
+<td style="color:gray;">Carry Forward</td>
+<td class="red">No</td>
+<td>Capacity</td>
+</tr>
+
+</table>
+</div>
+
+<!-- ✅ KPI CARDS -->
+<div class="card"><div>PI1 Delivery</div><div class="kpi orange">60%</div></div>
+<div class="card"><div>PI2 Delivery</div><div class="kpi orange">62%</div></div>
+<div class="card"><div>Total Items</div><div class="kpi">110</div></div>
+<div class="card"><div>Achieved</div><div class="kpi green">68</div></div>
+<div class="card"><div>Carry Forward</div><div class="kpi red">42</div></div>
+<div class="card"><div>Blocked</div><div class="kpi red">15</div></div>
+
+<!-- ✅ CHARTS -->
+<div class="card half">
+    <h3>Items per PI</h3>
+    <canvas id="itemsPI"></canvas>
+</div>
+
+<div class="card half">
+    <h3>Planned vs Achieved</h3>
+    <canvas id="plannedAchieved"></canvas>
+</div>
+
+<div class="card half">
+    <h3>Ownership</h3>
+    <canvas id="ownerChart"></canvas>
+</div>
+
+<div class="card half">
+    <h3>Status</h3>
+    <canvas id="statusChart"></canvas>
+</div>
+
+<div class="card half">
+    <h3>Reasons for Delay</h3>
+    <canvas id="reasonChart"></canvas>
+</div>
+
+<div class="card half">
+    <h3>Improvements</h3>
+    <canvas id="improvementChart"></canvas>
+</div>
+
+</div>
+
+<script>
+
+// Items per PI
+new Chart(document.getElementById('itemsPI'), {
+    type: 'bar',
+    data: {
+        labels: ['PI1','PI2'],
+        datasets: [{
+            label: 'Items',
+            data: [100,110],
+            backgroundColor: '#3498db'
+        }]
+    }
+});
+
+// Planned vs Achieved
+new Chart(document.getElementById('plannedAchieved'), {
+    type:'bar',
+    data:{
+        labels:['PI1','PI2'],
+        datasets:[
+            {label:'Planned', data:[100,110], backgroundColor:'#bdc3c7'},
+            {label:'Achieved', data:[60,68], backgroundColor:'#2ecc71'}
+        ]
+    }
+});
+
+// Ownership
+new Chart(document.getElementById('ownerChart'), {
+    type:'bar',
+    data:{
+        labels:['Salma','Ahmed','Ali','Sara'],
+        datasets:[{
+            data:[30,25,28,27],
+            backgroundColor:'#9b59b6'
+        }]
+    }
+});
+
+// Status
+new Chart(document.getElementById('statusChart'), {
+    type:'doughnut',
+    data:{
+        labels:['Done','In Progress','Blocked','Carry Forward'],
+        datasets:[{
+            data:[68,20,15,42],
+            backgroundColor:['green','orange','red','gray']
+        }]
+    }
+});
+
+// Reasons
+new Chart(document.getElementById('reasonChart'), {
+    type:'bar',
+    data:{
+        labels:['Dependency','Capacity','Scope'],
+        datasets:[{
+            data:[25,10,7],
+            backgroundColor:'red'
+        }]
+    }
+});
+
+// Improvements
+new Chart(document.getElementById('improvementChart'), {
+    type:'bar',
+    data:{
+        labels:['Escalate','Replan','Refine'],
+        datasets:[{
+            data:[20,15,10],
+            backgroundColor:'green'
+        }]
+    }
+});
+
+</script>
+
+</body>
+</html>
